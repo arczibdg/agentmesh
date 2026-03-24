@@ -16,7 +16,6 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@agentmesh/sdk": "workspace:*",
     "ajv": "^8.17.0",
     "better-sqlite3": "^11.0.0",
     "yaml": "^2.7.0"

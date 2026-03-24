@@ -1,4 +1,4 @@
-import type { ModelConfig } from '@agentmesh/sdk';
+import type { ModelConfig } from '../types.js';
 import { CircuitBreaker } from './circuit-breaker.js';
 
 export function parseModelString(model: string): ModelConfig {

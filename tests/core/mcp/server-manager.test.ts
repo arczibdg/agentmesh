@@ -10,8 +10,7 @@ describe('McpServerManager', () => {
 
   it('registers server definitions', () => {
     manager.register('github', { command: 'npx', args: ['@modelcontextprotocol/server-github'] });
-    expect(manager.isRegistered('github')).toBe(true);
-    expect(manager.isRegistered('unknown')).toBe(false);
+    expect(manager.getStatus('github')).toBe('registered');
   });
 
   it('throws when requesting unregistered server', async () => {
@@ -24,9 +23,6 @@ describe('McpServerManager', () => {
     manager.addConsumer('github', 'reviewer');
     expect(manager.getConsumers('github')).toEqual(expect.arrayContaining(['coder', 'reviewer']));
     expect(manager.getConsumers('github')).toHaveLength(2);
-
-    manager.removeConsumer('github', 'coder');
-    expect(manager.getConsumers('github')).toEqual(['reviewer']);
   });
 
   it('reports server health status', () => {

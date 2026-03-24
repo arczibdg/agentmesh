@@ -27,16 +27,8 @@ export class McpServerManager {
     }
   }
 
-  isRegistered(name: string): boolean {
-    return this.servers.has(name);
-  }
-
   addConsumer(serverName: string, agentName: string): void {
     this.getServer(serverName).consumers.add(agentName);
-  }
-
-  removeConsumer(serverName: string, agentName: string): void {
-    this.getServer(serverName).consumers.delete(agentName);
   }
 
   getConsumers(serverName: string): string[] {

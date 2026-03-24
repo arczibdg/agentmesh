@@ -88,7 +88,6 @@ defaults:
   model: claude-sonnet-4-6
   timeout: 120s
   retries: 3
-  checkpoint: true
 agents:
   coder:
     role: "Write code"
@@ -99,7 +98,6 @@ agents:
     expect(config.agents.coder.model).toBe('claude-sonnet-4-6');
     expect(config.agents.coder.timeout).toBe('120s');
     expect(config.agents.coder.retries).toBe(3);
-    expect(config.agents.coder.checkpoint).toBe(true);
     expect(config.agents.reviewer.model).toBe('claude-sonnet-4-6');
   });
 

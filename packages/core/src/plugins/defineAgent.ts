@@ -7,14 +7,12 @@ export interface AgentTemplateInput {
 }
 
 export interface AgentTemplate extends AgentTemplateInput {
-  __type: 'agentmesh:agent';
   defaultTools: string[];
 }
 
 export function defineAgent(input: AgentTemplateInput): AgentTemplate {
   return {
     ...input,
-    __type: 'agentmesh:agent',
     defaultTools: input.defaultTools ?? [],
   };
 }

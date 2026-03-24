@@ -9,9 +9,8 @@ export interface MemoryBackendInput {
 }
 
 export interface MemoryBackend extends MemoryBackendInput {
-  __type: 'agentmesh:memory';
 }
 
 export function defineMemory(input: MemoryBackendInput): MemoryBackend {
-  return { ...input, __type: 'agentmesh:memory' };
+  return { ...input };
 }

@@ -44,12 +44,11 @@ function resolveEnvVars(obj: unknown): unknown {
 
 function applyDefaults(config: MeshConfig): MeshConfig {
   if (!config.defaults || !config.agents) return config;
-  const { model, timeout, retries, checkpoint } = config.defaults;
+  const { model, timeout, retries } = config.defaults;
   for (const agent of Object.values(config.agents)) {
     if (model && !agent.model) agent.model = model;
     if (timeout && !agent.timeout) agent.timeout = timeout;
     if (retries !== undefined && agent.retries === undefined) agent.retries = retries;
-    if (checkpoint !== undefined && agent.checkpoint === undefined) agent.checkpoint = checkpoint;
   }
   return config;
 }

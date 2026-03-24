@@ -97,7 +97,7 @@ export class MeshRuntime {
 // Re-exports for package consumers
 export { parseConfig } from './config/parser.js';
 export { validateConfig } from './config/validator.js';
-export type { MeshConfig, AgentDef, McpServerDef, HttpToolDef, TriggerDef } from './config/types.js';
+export type { MeshConfig, AgentDef, McpServerDef, HttpToolDef } from './config/types.js';
 export { Supervisor } from './runtime/supervisor.js';
 export { MessageBus } from './bus/message-bus.js';
 export type { BusMessage } from './bus/types.js';
@@ -109,3 +109,12 @@ export { ModelRouter, parseModelString } from './models/model-router.js';
 export type { ModelClient } from './models/model-router.js';
 export { CircuitBreaker } from './models/circuit-breaker.js';
 export { AgentRunner } from './runtime/agent-runner.js';
+
+// Plugin SDK (merged from @agentmesh/sdk)
+export { defineAgent } from './plugins/defineAgent.js';
+export type { AgentTemplate, AgentTemplateInput } from './plugins/defineAgent.js';
+export { defineTool } from './plugins/defineTool.js';
+export type { ToolAdapter, ToolAdapterInput, ToolHandler } from './plugins/defineTool.js';
+export { defineMemory } from './plugins/defineMemory.js';
+export type { MemoryBackend, MemoryBackendInput } from './plugins/defineMemory.js';
+export type { MemoryEntry, ModelConfig, ToolCall, ToolResult, AgentContext } from './types.js';

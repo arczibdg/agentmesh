@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { defineMemory } from '../../packages/sdk/src/defineMemory';
+import { defineMemory } from '../../packages/core/src/plugins/defineMemory';
 
 describe('defineMemory', () => {
   it('returns a valid memory backend config', () => {
@@ -13,6 +13,6 @@ describe('defineMemory', () => {
       clear: async () => {},
     });
     expect(mem.name).toBe('redis');
-    expect(mem.__type).toBe('agentmesh:memory');
+    expect(mem.name).toBeDefined();
   });
 });

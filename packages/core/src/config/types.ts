@@ -4,7 +4,6 @@ export interface MeshConfig {
     model?: string;
     timeout?: string;
     retries?: number;
-    checkpoint?: boolean;
   };
   memory?: {
     store?: string;
@@ -24,7 +23,6 @@ export interface McpServerDef {
 export interface AgentDef {
   role: string;
   model?: string;
-  extends?: string;
   tools?: {
     mcp?: string[];
     http?: HttpToolDef[];
@@ -34,10 +32,8 @@ export interface AgentDef {
     write?: string[];
   };
   listen?: { from: string; on: string }[];
-  triggers?: TriggerDef[];
   timeout?: string;
   retries?: number;
-  checkpoint?: boolean;
   config?: Record<string, unknown>;
 }
 
@@ -45,9 +41,4 @@ export interface HttpToolDef {
   name: string;
   url: string;
   auth?: string;
-}
-
-export interface TriggerDef {
-  event?: string;
-  cron?: string;
 }

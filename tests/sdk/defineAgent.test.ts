@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { defineAgent } from '../../packages/sdk/src/defineAgent';
+import { defineAgent } from '../../packages/core/src/plugins/defineAgent';
 
 describe('defineAgent', () => {
   it('returns a valid agent config with all fields', () => {
@@ -13,7 +13,7 @@ describe('defineAgent', () => {
     expect(agent.role).toBe('Review PRs');
     expect(agent.defaultModel).toBe('claude-sonnet-4-6');
     expect(agent.defaultTools).toEqual(['github']);
-    expect(agent.__type).toBe('agentmesh:agent');
+    expect(agent.role).toBeDefined();
   });
 
   it('works with minimal fields', () => {
@@ -21,6 +21,6 @@ describe('defineAgent', () => {
     expect(agent.role).toBe('Do stuff');
     expect(agent.defaultModel).toBeUndefined();
     expect(agent.defaultTools).toEqual([]);
-    expect(agent.__type).toBe('agentmesh:agent');
+    expect(agent.role).toBeDefined();
   });
 });

@@ -18,8 +18,7 @@ const SCHEMA: Record<string, unknown> = {
       "properties": {
         "model": { "type": "string" },
         "timeout": { "type": "string", "pattern": "^\\d+s$" },
-        "retries": { "type": "integer", "minimum": 0, "maximum": 10 },
-        "checkpoint": { "type": "boolean" }
+        "retries": { "type": "integer", "minimum": 0, "maximum": 10 }
       }
     },
     "memory": {
@@ -72,7 +71,6 @@ const SCHEMA: Record<string, unknown> = {
       "properties": {
         "role": { "type": "string" },
         "model": { "type": "string" },
-        "extends": { "type": "string" },
         "tools": {
           "type": "object",
           "additionalProperties": false,
@@ -105,13 +103,8 @@ const SCHEMA: Record<string, unknown> = {
           "type": "array",
           "items": { "$ref": "#/$defs/listenEntry" }
         },
-        "triggers": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/trigger" }
-        },
         "timeout": { "type": "string", "pattern": "^\\d+s$" },
         "retries": { "type": "integer", "minimum": 0, "maximum": 10 },
-        "checkpoint": { "type": "boolean" },
         "config": {
           "type": "object"
         }
@@ -134,14 +127,6 @@ const SCHEMA: Record<string, unknown> = {
       "properties": {
         "from": { "type": "string" },
         "on": { "type": "string" }
-      }
-    },
-    "trigger": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "event": { "type": "string" },
-        "cron": { "type": "string" }
       }
     }
   }

@@ -1,8 +1,10 @@
+import type { AgentContext } from '../types.js';
+
 export interface ToolHandler {
   name: string;
   description: string;
   parameters: Record<string, string>;
-  handler: (params: Record<string, unknown>, ctx: unknown) => Promise<unknown>;
+  handler: (params: Record<string, unknown>, ctx: AgentContext) => Promise<unknown>;
 }
 
 export interface ToolAdapterInput {
@@ -13,9 +15,8 @@ export interface ToolAdapterInput {
 }
 
 export interface ToolAdapter extends ToolAdapterInput {
-  __type: 'agentmesh:tool';
 }
 
 export function defineTool(input: ToolAdapterInput): ToolAdapter {
-  return { ...input, __type: 'agentmesh:tool' };
+  return { ...input };
 }

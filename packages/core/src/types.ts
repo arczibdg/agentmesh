@@ -1,12 +1,3 @@
-export interface AgentMessage {
-  id: string;
-  from: string;
-  to: string | '*';
-  type: 'request' | 'response' | 'broadcast';
-  payload: unknown;
-  timestamp: number;
-}
-
 export interface MemoryEntry {
   namespace: string;
   key: string;

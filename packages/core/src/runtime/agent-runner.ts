@@ -1,5 +1,5 @@
 import type { ModelClient } from '../models/model-router.js';
-import type { AgentContext } from '@agentmesh/sdk';
+import type { AgentContext } from '../types.js';
 
 interface AgentRunnerOptions {
   agentName: string;
