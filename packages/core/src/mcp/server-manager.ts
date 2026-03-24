@@ -13,11 +13,18 @@ export class McpServerManager {
   private servers = new Map<string, ManagedServer>();
 
   register(name: string, def: McpServerDef): void {
+    this.validateCommand(def.command);
     this.servers.set(name, {
       def,
       status: 'registered',
       consumers: new Set(),
     });
+  }
+
+  private validateCommand(command: string): void {
+    if (/[;&|`$(){}]/.test(command)) {
+      throw new Error(`MCP server command contains unsafe characters: ${command}`);
+    }
   }
 
   isRegistered(name: string): boolean {

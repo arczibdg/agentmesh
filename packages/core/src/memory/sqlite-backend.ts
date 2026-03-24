@@ -2,6 +2,11 @@ import Database from 'better-sqlite3';
 
 export class SqliteBackend {
   private db: Database.Database;
+  private closed = false;
+  private stmtGet: Database.Statement;
+  private stmtSet: Database.Statement;
+  private stmtList: Database.Statement;
+  private stmtClear: Database.Statement;
 
   constructor(dbPath: string) {
     this.db = new Database(dbPath);
@@ -16,31 +21,33 @@ export class SqliteBackend {
         PRIMARY KEY (namespace, key)
       )
     `);
+    this.stmtGet = this.db.prepare('SELECT value FROM memory WHERE namespace = ? AND key = ?');
+    this.stmtSet = this.db.prepare('INSERT OR REPLACE INTO memory (namespace, key, value, updated_by, updated_at) VALUES (?, ?, ?, ?, ?)');
+    this.stmtList = this.db.prepare('SELECT key FROM memory WHERE namespace = ?');
+    this.stmtClear = this.db.prepare('DELETE FROM memory WHERE namespace = ?');
   }
 
   async get(namespace: string, key: string): Promise<unknown> {
-    const row = this.db.prepare('SELECT value FROM memory WHERE namespace = ? AND key = ?')
-      .get(namespace, key) as { value: string } | undefined;
+    const row = this.stmtGet.get(namespace, key) as { value: string } | undefined;
     return row ? JSON.parse(row.value) : null;
   }
 
   async set(namespace: string, key: string, value: unknown, updatedBy: string): Promise<void> {
-    this.db.prepare(
-      'INSERT OR REPLACE INTO memory (namespace, key, value, updated_by, updated_at) VALUES (?, ?, ?, ?, ?)'
-    ).run(namespace, key, JSON.stringify(value), updatedBy, Date.now());
+    this.stmtSet.run(namespace, key, JSON.stringify(value), updatedBy, Date.now());
   }
 
   async list(namespace: string): Promise<string[]> {
-    const rows = this.db.prepare('SELECT key FROM memory WHERE namespace = ?')
-      .all(namespace) as { key: string }[];
+    const rows = this.stmtList.all(namespace) as { key: string }[];
     return rows.map((r) => r.key);
   }
 
   async clear(namespace: string): Promise<void> {
-    this.db.prepare('DELETE FROM memory WHERE namespace = ?').run(namespace);
+    this.stmtClear.run(namespace);
   }
 
   close(): void {
+    if (this.closed) return;
+    this.closed = true;
     this.db.close();
   }
 }

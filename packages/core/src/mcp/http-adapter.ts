@@ -12,6 +12,9 @@ export class HttpToolAdapter {
     if (!def) {
       throw new Error(`HTTP tool "${toolName}" is not registered`);
     }
+    if (!path.startsWith('/') || path.includes('..')) {
+      throw new Error(`Invalid path: ${path}`);
+    }
 
     const url = `${def.url.replace(/\/$/, '')}${path}`;
     const headers: Record<string, string> = {

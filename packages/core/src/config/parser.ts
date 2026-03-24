@@ -2,12 +2,12 @@ import YAML from 'yaml';
 import type { MeshConfig } from './types.js';
 
 export function parseConfig(yamlContent: string): MeshConfig {
-  const raw = YAML.parse(yamlContent) as MeshConfig;
-  const resolved = resolveEnvVars(raw);
+  const raw = YAML.parse(yamlContent, { maxAliasCount: 64 }) as MeshConfig;
+  const resolved = resolveEnvVars(raw) as MeshConfig;
   return applyDefaults(resolved);
 }
 
-function resolveEnvVars(obj: unknown): any {
+function resolveEnvVars(obj: unknown): unknown {
   if (typeof obj === 'string') {
     const exactMatch = obj.match(/^\$env\.(.+)$/);
     if (exactMatch) {
@@ -32,8 +32,9 @@ function resolveEnvVars(obj: unknown): any {
   }
   if (Array.isArray(obj)) return obj.map(resolveEnvVars);
   if (obj !== null && typeof obj === 'object') {
-    const result: Record<string, unknown> = {};
+    const result: Record<string, unknown> = Object.create(null);
     for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
       result[key] = resolveEnvVars(value);
     }
     return result;
@@ -42,7 +43,7 @@ function resolveEnvVars(obj: unknown): any {
 }
 
 function applyDefaults(config: MeshConfig): MeshConfig {
-  if (!config.defaults) return config;
+  if (!config.defaults || !config.agents) return config;
   const { model, timeout, retries, checkpoint } = config.defaults;
   for (const agent of Object.values(config.agents)) {
     if (model && !agent.model) agent.model = model;

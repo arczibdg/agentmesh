@@ -34,11 +34,17 @@ export class MemoryStore {
     return this.sqlite.set(namespace, key, value, agentName);
   }
 
-  async list(namespace: string): Promise<string[]> {
+  async list(namespace: string, agentName: string, permissions: MemoryPermissions): Promise<string[]> {
+    if (!permissions.read.includes(namespace)) {
+      throw new Error(`Agent '${agentName}' lacks read permission for namespace '${namespace}'`);
+    }
     return this.sqlite.list(namespace);
   }
 
-  async clear(namespace: string): Promise<void> {
+  async clear(namespace: string, agentName: string, permissions: MemoryPermissions): Promise<void> {
+    if (!permissions.write.includes(namespace)) {
+      throw new Error(`Agent '${agentName}' lacks write permission for namespace '${namespace}'`);
+    }
     return this.sqlite.clear(namespace);
   }
 

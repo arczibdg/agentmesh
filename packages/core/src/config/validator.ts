@@ -1,7 +1,6 @@
 import Ajv from 'ajv';
 
 const SCHEMA: Record<string, unknown> = {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "AgentMesh Configuration",
   "description": "Schema for mesh.yaml configuration files",
   "type": "object",
@@ -148,12 +147,10 @@ const SCHEMA: Record<string, unknown> = {
   }
 };
 
+const ajv = new Ajv({ allErrors: true });
+const validate = ajv.compile(SCHEMA);
+
 export function validateConfig(config: unknown): void {
-  const schema = { ...SCHEMA };
-  // Remove $schema keyword — Ajv draft-07 doesn't recognize draft/2020-12
-  delete schema['$schema'];
-  const ajv = new Ajv({ allErrors: true });
-  const validate = ajv.compile(schema);
   const valid = validate(config);
 
   if (!valid && validate.errors) {
