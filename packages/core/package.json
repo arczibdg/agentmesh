@@ -1,0 +1,25 @@
+{
+  "name": "@agentmesh/core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@agentmesh/sdk": "workspace:*",
+    "better-sqlite3": "^11.0.0",
+    "ajv": "^8.17.0",
+    "yaml": "^2.7.0"
+  },
+  "files": ["dist"]
+}
