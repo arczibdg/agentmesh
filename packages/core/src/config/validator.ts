@@ -1,30 +1,155 @@
 import Ajv from 'ajv';
-import { readFileSync, existsSync } from 'node:fs';
-import { resolve, dirname, join } from 'node:path';
 
-let cachedSchema: Record<string, unknown> | null = null;
-
-function findSchemaFile(): string {
-  // Walk up from cwd looking for schema.json (works regardless of CJS/ESM)
-  let dir = process.cwd();
-  while (true) {
-    const candidate = join(dir, 'schema.json');
-    if (existsSync(candidate)) return candidate;
-    const parent = dirname(dir);
-    if (parent === dir) break;
-    dir = parent;
+const SCHEMA: Record<string, unknown> = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentMesh Configuration",
+  "description": "Schema for mesh.yaml configuration files",
+  "type": "object",
+  "required": ["version", "agents"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "enum": ["1"],
+      "description": "Config schema version"
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "model": { "type": "string" },
+        "timeout": { "type": "string", "pattern": "^\\d+s$" },
+        "retries": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "checkpoint": { "type": "boolean" }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "store": { "type": "string" },
+        "path": { "type": "string" },
+        "namespaces": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "mcp": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/mcpServer"
+      }
+    },
+    "agents": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/agent"
+      }
+    }
+  },
+  "$defs": {
+    "mcpServer": {
+      "type": "object",
+      "required": ["command"],
+      "additionalProperties": false,
+      "properties": {
+        "command": { "type": "string" },
+        "args": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "agent": {
+      "type": "object",
+      "required": ["role"],
+      "additionalProperties": false,
+      "properties": {
+        "role": { "type": "string" },
+        "model": { "type": "string" },
+        "extends": { "type": "string" },
+        "tools": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "mcp": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "http": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/httpTool" }
+            }
+          }
+        },
+        "memory": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "read": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "write": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "listen": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/listenEntry" }
+        },
+        "triggers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/trigger" }
+        },
+        "timeout": { "type": "string", "pattern": "^\\d+s$" },
+        "retries": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "checkpoint": { "type": "boolean" },
+        "config": {
+          "type": "object"
+        }
+      }
+    },
+    "httpTool": {
+      "type": "object",
+      "required": ["name", "url"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "auth": { "type": "string" }
+      }
+    },
+    "listenEntry": {
+      "type": "object",
+      "required": ["from", "on"],
+      "additionalProperties": false,
+      "properties": {
+        "from": { "type": "string" },
+        "on": { "type": "string" }
+      }
+    },
+    "trigger": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event": { "type": "string" },
+        "cron": { "type": "string" }
+      }
+    }
   }
-  throw new Error('schema.json not found. Run from the agentmesh project root.');
-}
-
-function loadSchema(): Record<string, unknown> {
-  if (cachedSchema) return cachedSchema;
-  cachedSchema = JSON.parse(readFileSync(findSchemaFile(), 'utf-8')) as Record<string, unknown>;
-  return cachedSchema;
-}
+};
 
 export function validateConfig(config: unknown): void {
-  const schema = { ...loadSchema() };
+  const schema = { ...SCHEMA };
   // Remove $schema keyword — Ajv draft-07 doesn't recognize draft/2020-12
   delete schema['$schema'];
   const ajv = new Ajv({ allErrors: true });
