@@ -1,0 +1,20 @@
+# mesh.example.yaml — starter config
+version: "1"
+
+defaults:
+  model: claude-sonnet-4-6
+  timeout: 120s
+  retries: 3
+
+memory:
+  namespaces:
+    - shared
+
+agents:
+  assistant:
+    role: "General-purpose AI assistant"
+    tools:
+      mcp: []
+    memory:
+      read: [shared]
+      write: [shared]
