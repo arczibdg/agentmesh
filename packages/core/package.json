@@ -17,9 +17,14 @@
   },
   "dependencies": {
     "@agentmesh/sdk": "workspace:*",
-    "better-sqlite3": "^11.0.0",
     "ajv": "^8.17.0",
+    "better-sqlite3": "^11.0.0",
     "yaml": "^2.7.0"
   },
-  "files": ["dist"]
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13"
+  }
 }
