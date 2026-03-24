@@ -21,10 +21,10 @@ describe('MessageBus', () => {
     expect(result).toEqual({ answer: 42 });
   });
 
-  it('ask times out if no handler registered', async () => {
+  it('throws immediately if no handler registered', async () => {
     await expect(
-      bus.ask('agentA', 'unknownAgent', { data: 1 }, 100),
-    ).rejects.toThrow(/timeout/i);
+      bus.ask('agentA', 'unknownAgent', { data: 1 }),
+    ).rejects.toThrow("No handler registered for agent 'unknownAgent'");
   });
 
   it('broadcast delivers to all subscribers', () => {

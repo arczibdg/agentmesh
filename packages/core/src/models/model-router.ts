@@ -42,23 +42,21 @@ export class ModelRouter {
   private clients = new Map<string, ModelClient>();
 
   getClient(modelString: string): ModelClient {
-    const config = parseModelString(modelString);
-
-    const existing = this.clients.get(config.provider);
-    if (existing) {
-      return existing;
+    if (this.clients.has(modelString)) {
+      return this.clients.get(modelString)!;
     }
 
+    const config = parseModelString(modelString);
     const client: ModelClient = {
       provider: config.provider,
       config,
-      circuitBreaker: new CircuitBreaker({ failureThreshold: 5, resetTimeoutMs: 30_000 }),
+      circuitBreaker: new CircuitBreaker({ failureThreshold: 3, resetTimeoutMs: 60_000 }),
       chat: async () => {
         throw new Error(`Chat not implemented for provider: ${config.provider}`);
       },
     };
 
-    this.clients.set(config.provider, client);
+    this.clients.set(modelString, client);
     return client;
   }
 }

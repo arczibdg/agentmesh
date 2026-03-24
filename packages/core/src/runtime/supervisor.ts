@@ -35,18 +35,26 @@ export class Supervisor {
   }
 
   async startAll(workerPath: string): Promise<void> {
-    for (const [name] of this.agents) {
-      await this.startAgent(name, workerPath);
-    }
+    await Promise.all(
+      [...this.agents.keys()].map(name => this.startAgent(name, workerPath))
+    );
   }
 
   async startAgent(name: string, workerPath: string): Promise<void> {
     const agent = this.agents.get(name);
     if (!agent) throw new Error(`Agent '${name}' not found`);
     agent.status = 'starting';
-    const worker = new Worker(workerPath, { workerData: { agentName: name, agentDef: agent.def } });
-    worker.on('error', () => { agent.status = 'failed'; });
-    worker.on('exit', (code) => { if (code !== 0 && agent.status !== 'stopped') agent.status = 'failed'; });
+    const workerDef = { role: agent.def.role, model: agent.def.model, timeout: agent.def.timeout, retries: agent.def.retries };
+    const worker = new Worker(workerPath, { workerData: { agentName: name, agentDef: workerDef } });
+    worker.on('error', (err) => {
+      agent.status = 'failed';
+      console.error(`[agentmesh] Agent '${name}' crashed:`, err.message);
+    });
+    worker.on('exit', (code) => {
+      if (code !== 0 && agent.status !== 'stopped') {
+        agent.status = 'failed';
+      }
+    });
     agent.worker = worker;
     agent.status = 'running';
     agent.startedAt = Date.now();

@@ -30,7 +30,11 @@ export class MeshRuntime {
     validateConfig(this.config);
 
     // Initialize memory
-    const memPath = this.config.memory?.path ?? '.agentmesh/memory.db';
+    const configDir = path.dirname(path.resolve(options.configPath));
+    const memPath = path.resolve(configDir, this.config.memory?.path ?? '.agentmesh/memory.db');
+    if (!memPath.startsWith(configDir + path.sep) && !memPath.startsWith(configDir + '/')) {
+      throw new Error(`memory.path must be within the project directory. Got: ${memPath}`);
+    }
     const memDir = path.dirname(memPath);
     if (!fs.existsSync(memDir)) fs.mkdirSync(memDir, { recursive: true });
     this.memoryStore = new MemoryStore({

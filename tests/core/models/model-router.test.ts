@@ -61,10 +61,20 @@ describe('ModelRouter', () => {
     expect(client.circuitBreaker).toBeDefined();
   });
 
-  it('reuses client for same provider', () => {
+  it('creates separate clients for different models of same provider', () => {
     const router = new ModelRouter();
     const client1 = router.getClient('claude-sonnet-4-6');
     const client2 = router.getClient('claude-opus-4-6');
+
+    expect(client1).not.toBe(client2);
+    expect(client1.provider).toBe('anthropic');
+    expect(client2.provider).toBe('anthropic');
+  });
+
+  it('reuses client for same model string', () => {
+    const router = new ModelRouter();
+    const client1 = router.getClient('claude-sonnet-4-6');
+    const client2 = router.getClient('claude-sonnet-4-6');
 
     expect(client1).toBe(client2);
   });
