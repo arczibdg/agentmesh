@@ -1,6 +1,9 @@
 {
   "name": "@agentmesh/core",
   "version": "0.1.0",
+  "description": "Core runtime for AgentMesh — multi-agent orchestration engine",
+  "license": "MIT",
+  "keywords": ["ai", "agents", "multi-agent", "orchestration", "mcp", "llm", "typescript"],
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

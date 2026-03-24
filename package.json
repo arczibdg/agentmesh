@@ -1,6 +1,8 @@
 {
   "name": "agentmesh-monorepo",
   "private": true,
+  "description": "Docker Compose for AI agents",
+  "license": "MIT",
   "scripts": {
     "build": "pnpm -r build",
     "test": "vitest run",

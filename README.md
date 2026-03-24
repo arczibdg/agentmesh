@@ -38,7 +38,7 @@ mcp:
     command: npx
     args: ["-y", "@modelcontextprotocol/server-github"]
     env:
-      GITHUB_TOKEN: ${GITHUB_TOKEN}
+      GITHUB_TOKEN: $env.GITHUB_TOKEN
 
 agents:
   reviewer:
@@ -58,7 +58,7 @@ agents:
       http:
         - name: deploy
           url: https://api.render.com/v1/deploys
-          auth: Bearer ${RENDER_TOKEN}
+          auth: Bearer $env.RENDER_TOKEN
     memory:
       read: [shared, deployments]
       write: [deployments]
@@ -79,8 +79,6 @@ agents:
     listen:
       - from: deployer
         on: deployed
-    triggers:
-      - cron: "*/5 * * * *"
 ```
 
 Run it:
@@ -104,25 +102,21 @@ The reviewer analyzes PRs. When it approves, the deployer picks up the change. A
 
 ## CLI Commands
 
-| Command                  | Description                                      |
-|--------------------------|--------------------------------------------------|
-| `agentmesh init`         | Scaffold a new `mesh.yaml` in the current directory |
-| `agentmesh up`           | Start all agents defined in `mesh.yaml`          |
-| `agentmesh down`         | Stop all running agents                          |
-| `agentmesh status`       | Show running agents and their current state      |
-| `agentmesh logs [agent]` | Stream logs from one or all agents               |
-| `agentmesh validate`     | Validate `mesh.yaml` against the schema          |
-| `agentmesh doctor`       | Check environment: models reachable, MCP servers healthy, memory writable |
-| `agentmesh ask <prompt>` | Send a one-shot prompt to a running agent        |
+| Command              | Description                                      |
+|----------------------|--------------------------------------------------|
+| `agentmesh init`     | Scaffold a new `mesh.yaml` in the current directory |
+| `agentmesh up`       | Start all agents defined in `mesh.yaml`          |
+| `agentmesh validate` | Validate `mesh.yaml` against the schema          |
+| `agentmesh doctor`   | Check environment: models reachable, env vars set, config valid |
 
 ## Plugin System
 
-AgentMesh ships an SDK for extending every layer. Plugins are plain TypeScript modules.
+AgentMesh is extensible at every layer. Plugins are plain TypeScript modules.
 
 ### Agent Templates
 
 ```typescript
-import { defineAgent } from "@agentmesh/sdk";
+import { defineAgent } from "@agentmesh/core";
 
 export default defineAgent({
   role: "Triage incoming GitHub issues by priority and label",
@@ -135,7 +129,7 @@ export default defineAgent({
 ### Tool Adapters
 
 ```typescript
-import { defineTool } from "@agentmesh/sdk";
+import { defineTool } from "@agentmesh/core";
 
 export default defineTool({
   name: "slack",
@@ -157,7 +151,7 @@ export default defineTool({
 ### Memory Backends
 
 ```typescript
-import { defineMemory } from "@agentmesh/sdk";
+import { defineMemory } from "@agentmesh/core";
 
 export default defineMemory({
   name: "redis",
@@ -174,7 +168,7 @@ export default defineMemory({
 
 AgentMesh is built from six core components:
 
-1. **Config Parser** -- reads `mesh.yaml`, validates against the JSON schema, resolves `${ENV}` variables and `extends` inheritance.
+1. **Config Parser** -- reads `mesh.yaml`, validates against the JSON schema, resolves `$env.VAR` references.
 2. **Memory Store** -- SQLite-backed key-value store with namespace isolation. Agents only access namespaces they are permitted to read or write.
 3. **Message Bus** -- in-process pub/sub for agent-to-agent communication. Supports direct messages (`listen`/`on`) and broadcast.
 4. **Model Router** -- dispatches prompts to the correct provider (OpenAI, Anthropic, Ollama, Google) based on the model string. Includes circuit breaker logic for fault tolerance.

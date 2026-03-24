@@ -1,6 +1,9 @@
 {
   "name": "agentmesh",
   "version": "0.1.0",
+  "description": "Docker Compose for AI agents — define your agent team in YAML, run with one command",
+  "license": "MIT",
+  "keywords": ["ai", "agents", "multi-agent", "orchestration", "mcp", "llm", "cli", "yaml"],
   "type": "module",
   "bin": {
     "agentmesh": "./dist/index.js"
