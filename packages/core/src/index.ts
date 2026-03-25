@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parseConfig } from './config/parser.js';
 import { validateConfig } from './config/validator.js';
 import type { MeshConfig } from './config/types.js';
@@ -76,7 +77,7 @@ export class MeshRuntime {
       }
     }
     // Start agent workers
-    const workerPath = new URL('./runtime/worker-entry.js', import.meta.url).pathname;
+    const workerPath = fileURLToPath(new URL('./runtime/worker-entry.js', import.meta.url));
     await this.supervisor.startAll(workerPath);
   }
 
