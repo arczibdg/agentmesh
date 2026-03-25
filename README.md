@@ -2,6 +2,10 @@
 
 **Docker Compose for AI agents.** Define your AI agent team in YAML, run them with one command.
 
+<p align="center">
+  <img src="demo.gif" alt="AgentMesh Demo" width="720">
+</p>
+
 ---
 
 ## Why AgentMesh
